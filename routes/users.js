@@ -2,17 +2,27 @@ const express = require('express');
 const router = express.Router();
 
 // ORDER OF CALLS MATTER
+router.use(logger);
 
 router.get('/', (req, res) => {
+  console.log(res.query.name);
   res.send('User List');
 });
 
 router.get('/new', (req, res) => {
-  res.send('User New Form');
+  // res.send('User New Form');
+  res.render('users/new' /*{firstName: 'test'}*/);
 });
 
 router.post('/', (req, res) => {
-  res.send('Create User');
+  const isValid = false;
+  if (isValid) {
+    users.push({ firstName: req.body.firstName });
+    res.redirect(`/users/${users.length - 1}`);
+  } else {
+    console.log('Error');
+    res.render('users/new', { firstName: req.body.firstName });
+  }
 });
 
 router
@@ -34,5 +44,11 @@ router.param('id', (req, res, next, id) => {
   req.user = users[id];
   next();
 });
+
+// When creating a middleware 'next' argument must be declared
+function logger(req, res, next) {
+  console.log(req.originalUrl);
+  next();
+}
 
 module.exports = router;
